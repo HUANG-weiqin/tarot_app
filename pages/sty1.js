@@ -19,6 +19,18 @@ export const styles1 = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    cardChosed: {
+        backgroundColor: '#fff',
+        width: '6.5%',
+        height: '15.4%',
+        margin: '0.5%',
+        borderColor: '#111',
+        borderRadius: 5,
+        borderWidth: 3,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     cardTable: {
         display: 'flex',
         flexDirection: 'row',

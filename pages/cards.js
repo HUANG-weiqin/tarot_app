@@ -2,14 +2,23 @@ const { Text, View } = require("react-native")
 import { styles1 } from './sty1'
 
 
-export const cardsGrid = (props) => {
+export const cardsGrid = (props, state) => {
     var ls = []
     for (let i = 0; i < 78; i++) {
-        ls.push(
-            <View style={[styles1.card]} onTouchEnd={() => props.choseCardCallback(i)}>
-                <Text>f</Text>
-            </View>
-        )
+        if (!state.cardsIdx.includes(i)) {
+            ls.push(
+                <View style={[styles1.card]} onTouchEnd={() => props.choseCardCallback(i)}>
+                    <Text>X</Text>
+                </View>
+            )
+        }
+        else {
+            ls.push(
+                <View style={[styles1.cardChosed]}>
+                    <Text>{props.shuffleCards[i]}</Text>
+                </View>
+            )
+        }
     }
     return <View style={styles1.cardTable}>
         {ls}
@@ -48,9 +57,8 @@ const cardsShow = (state) => {
         }
     }
 
-    v1 = 'fuck'
-    v2 = 'fuck'
-    v3 = 'fuck'
+    v1 = v2 = v3 = 'X'
+
 
     if (state.cards.length >= 1) {
         v1 = state.cards[0]
@@ -76,5 +84,5 @@ const cardsShow = (state) => {
 }
 
 export const cardsPan = (props, state) => {
-    return [cardsShow(state), cardsGrid(props)]
+    return [cardsShow(state), cardsGrid(props, state)]
 }

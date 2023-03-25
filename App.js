@@ -18,6 +18,13 @@ const content_center = (choix, props, state) => {
 
 };
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array
+}
 
 export default class App extends Component {
   constructor(props) {
@@ -25,19 +32,35 @@ export default class App extends Component {
     this.state =
     {
       pan: 1,
-      cards: []
+      cards: [],
+      cardsIdx: []
     };
-    this.pro = { choseCardCallback: (ix)=>this.choseCard(ix) }
+    this.pro = { choseCardCallback: (ix) => this.choseCard(ix) }
+    this.updateShuffleCards()
+  }
+
+  updateShuffleCards() {
+    this.pro['shuffleCards'] = shuffleArray([...Array(78).keys()])
   }
 
   chose(idx) {
     this.setState({ pan: idx })
   }
 
-  choseCard(cardId) {
-    Alert.alert("cardId", cardId.toString())
-    this.state.cards.push(cardId)
-    this.setState({ cards: this.state.cards })
+  choseCard(cardIdx) {
+    if (this.state.cards.length >= 3) {
+      Alert.alert("restart", 'game restart!!!')
+      this.updateShuffleCards()
+      this.setState({ cards: [] })
+      this.setState({ cardsIdx: [] })
+      return
+    }
+    this.state.cardsIdx.push(cardIdx)
+    this.state.cards.push(this.pro.shuffleCards[cardIdx])
+    this.setState({
+      cards: this.state.cards,
+      cardsIdx: this.state.cardsIdx,
+    })
   }
 
   render() {
