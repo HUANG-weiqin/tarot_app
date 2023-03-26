@@ -79,5 +79,69 @@ export const styles1 = StyleSheet.create({
         width: '100%',
         height: '100%',
     },
+    chatPage: {
+        width: '100%',
+        height: '100%',
+        paddingVertical:'5%'
+    },
+    chatPan: {
+        display: 'flex',
+        width: '100%',
+        height: '90%',
+        paddingVertical:'5%'
+    },
+    chatPopLeft:
+    {
+        maxWidth: '70%',
+        paddingHorizontal: '2%',
+        paddingVertical: '3%',
+        backgroundColor: '#1f4',
+        alignSelf: 'flex-start',
+        borderColor: '#1ff',
+        borderRadius: 5,
+        borderWidth: 2,
+        marginVertical:'1%',
+    },
+    chatPopRight:
+    {
+        maxWidth: '70%',
+        paddingHorizontal: '2%',
+        paddingVertical: '3%',
+        backgroundColor: '#1f4',
+        alignSelf: 'flex-end',
+        borderColor: '#1f4',
+        borderRadius: 5,
+        borderWidth: 2,
+        marginVertical:'1%',
+    },
+    chatText: 
+    {
 
+    },
+    InputBar:{
+        display: 'flex',
+        flexDirection:'row',
+        justifyContent:'space-around',
+        alignItems:'center',
+        width: '100%',
+        height: '7%',
+    },
+    ChatInput:{
+        backgroundColor: '#fff',
+        width: '80%',
+        height: '100%',
+        borderColor: '#1ff',
+        borderRadius: 5,
+        borderWidth: 2,
+    },
+    SendButton:{
+        width: '17%',
+        height: '100%',
+        backgroundColor:'#7823'
+    },
+    SendButtonDeactivated:{
+        width: '17%',
+        height: '100%',
+        backgroundColor:'#ffff'
+    }
 })

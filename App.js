@@ -2,6 +2,7 @@ import { Button, Text, View, Alert } from 'react-native'
 import React, { Component } from 'react'
 import { styles1 } from './pages/sty1'
 import { cardsPan } from './pages/cards'
+import { chatPan } from './pages/chat'
 
 const content_center = (choix, props, state) => {
 
@@ -9,7 +10,7 @@ const content_center = (choix, props, state) => {
     case 1:
       return cardsPan(props, state);
     case 2:
-      return <Text style={styles1.h1}>tarot</Text>;
+      return chatPan(props, state);
     case 3:
       return <Text style={styles1.h1}>me</Text>;
     default:
@@ -31,11 +32,17 @@ export default class App extends Component {
     super(props);
     this.state =
     {
-      pan: 1,
+      pan: 2,
       cards: [],
-      cardsIdx: []
+      cardsIdx: [],
+      chats: [[1, 'fucksss'], [0, 'kkkisssssss']],
+      TextEditing: ''
     };
-    this.pro = { choseCardCallback: (ix) => this.choseCard(ix) }
+    this.pro = {
+      choseCardCallback: (ix) => this.choseCard(ix),
+      TextChangeCallback: (text) => this.textChange(text),
+      TextSendCallback: () => this.textSend(),
+    }
     this.updateShuffleCards()
   }
 
@@ -45,6 +52,18 @@ export default class App extends Component {
 
   chose(idx) {
     this.setState({ pan: idx })
+  }
+
+  textChange(text) {
+    this.setState({ TextEditing: text })
+  }
+  textSend() {
+    //Alert.alert("fuck","send")
+    this.state.chats.push([1, this.state.TextEditing])
+    this.setState({
+      TextEditing: '',
+      chats: this.state.chats
+    })
   }
 
   choseCard(cardIdx) {
