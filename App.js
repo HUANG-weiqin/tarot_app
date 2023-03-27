@@ -1,8 +1,17 @@
 import { Button, Text, View, Alert } from 'react-native'
 import React, { Component } from 'react'
 import { styles1 } from './pages/sty1'
-import { cardsPan } from './pages/cards'
+import { cardsGrid, cardsShow } from './pages/cards'
 import { chatPan } from './pages/chat'
+
+const cardsPan = (props, state) => {
+  if (!state.chating) {
+    return [cardsShow(state), cardsGrid(props, state)]
+  }
+  else {
+    return [cardsShow(state), chatPan(props, state)]
+  }
+}
 
 const content_center = (choix, props, state) => {
 
@@ -19,6 +28,10 @@ const content_center = (choix, props, state) => {
 
 };
 
+const get_card_name = (idx) => {
+  return '钱币一'
+}
+
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -32,18 +45,32 @@ export default class App extends Component {
     super(props);
     this.state =
     {
-      pan: 2,
+      pan: 1,
       cards: [],
       cardsIdx: [],
-      chats: [[1, 'fucksss'], [0, 'kkkisssssss']],
-      TextEditing: ''
+      chating: true,
+      chats: [[0, '你好，请问有什么问题么']],// 1 user,0 chatgpt
+      TextEditing: '',
     };
+
     this.pro = {
       choseCardCallback: (ix) => this.choseCard(ix),
       TextChangeCallback: (text) => this.textChange(text),
       TextSendCallback: () => this.textSend(),
     }
     this.updateShuffleCards()
+  }
+
+  restart() {
+    copy = {
+      pan: 1,
+      cards: [],
+      cardsIdx: [],
+      chating: true,
+      chats: [[0, '你好，请问有什么问题么']],// 1 user,0 chatgpt
+      TextEditing: '',
+    };
+    this.setState(copy)
   }
 
   updateShuffleCards() {
@@ -58,28 +85,75 @@ export default class App extends Component {
     this.setState({ TextEditing: text })
   }
   textSend() {
-    //Alert.alert("fuck","send")
     this.state.chats.push([1, this.state.TextEditing])
     this.setState({
       TextEditing: '',
       chats: this.state.chats
     })
+    this.chatGptRespose()
+  }
+
+  choosingCard(bool) {
+    if (!bool) {
+      card0 = get_card_name(this.state.cards[0])
+      card1 = get_card_name(this.state.cards[1])
+      card2 = get_card_name(this.state.cards[2])
+      this.state.chats = this.state.chats.concat(
+        [
+          [1,'我抽到的牌是:'],
+          [1,card0],
+          [1,card1],
+          [1,card2],
+        ]
+      )
+      this.setState({
+        TextEditing: '',
+        chats: this.state.chats
+      })
+      this.chatGptRespose()
+    }
+    this.setState({ chating: !bool })
+  }
+
+  chatGptRespose() {
+    if (this.state.chats.length == 2) {
+      this.updateShuffleCards()
+      Alert.alert("Tarot Cards", 'ok let do it',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => this.restart(),
+          }
+          ,
+          {
+            text: 'OK',
+            onPress: () => this.choosingCard(true),
+          }
+        ]
+      )
+    }
   }
 
   choseCard(cardIdx) {
-    if (this.state.cards.length >= 3) {
-      Alert.alert("restart", 'game restart!!!')
-      this.updateShuffleCards()
-      this.setState({ cards: [] })
-      this.setState({ cardsIdx: [] })
-      return
-    }
+
     this.state.cardsIdx.push(cardIdx)
     this.state.cards.push(this.pro.shuffleCards[cardIdx])
     this.setState({
       cards: this.state.cards,
       cardsIdx: this.state.cardsIdx,
     })
+
+    if (this.state.cards.length >= 3) {
+      Alert.alert("Tarot Cards", 'Selection completed',
+        [
+          {
+            text: 'OK',
+            onPress: () => this.choosingCard(false),
+          }
+        ])
+
+      return
+    }
   }
 
   render() {

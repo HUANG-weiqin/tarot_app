@@ -26,7 +26,7 @@ export const cardsGrid = (props, state) => {
 
 }
 
-const cardsShow = (state) => {
+export const cardsShow = (state) => {
     const styles = {
         cTop: {
             display: 'flex',
@@ -83,6 +83,3 @@ const cardsShow = (state) => {
 
 }
 
-export const cardsPan = (props, state) => {
-    return [cardsShow(state), cardsGrid(props, state)]
-}

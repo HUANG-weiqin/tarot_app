@@ -80,21 +80,22 @@ export const styles1 = StyleSheet.create({
         height: '100%',
     },
     chatPage: {
+        backgroundColor: '#112',
         width: '100%',
-        height: '100%',
-        paddingVertical:'5%'
+        maxHeight: '45%',
+        padding:'2%'
     },
     chatPan: {
         display: 'flex',
         width: '100%',
-        height: '90%',
-        paddingVertical:'5%'
+        height: '75%',
+        paddingVertical:'1%'
     },
     chatPopLeft:
     {
         maxWidth: '70%',
         paddingHorizontal: '2%',
-        paddingVertical: '3%',
+        paddingVertical: '2%',
         backgroundColor: '#1f4',
         alignSelf: 'flex-start',
         borderColor: '#1ff',
@@ -106,7 +107,7 @@ export const styles1 = StyleSheet.create({
     {
         maxWidth: '70%',
         paddingHorizontal: '2%',
-        paddingVertical: '3%',
+        paddingVertical: '2%',
         backgroundColor: '#1f4',
         alignSelf: 'flex-end',
         borderColor: '#1f4',
@@ -124,7 +125,7 @@ export const styles1 = StyleSheet.create({
         justifyContent:'space-around',
         alignItems:'center',
         width: '100%',
-        height: '7%',
+        height: '20%',
     },
     ChatInput:{
         backgroundColor: '#fff',
