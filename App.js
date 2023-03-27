@@ -3,6 +3,12 @@ import React, { Component } from 'react'
 import { styles1 } from './pages/sty1'
 import { cardsGrid, cardsShow } from './pages/cards'
 import { chatPan } from './pages/chat'
+import data from './data/cards.json'
+import { ChatGptBot } from './ChatGpt/gptTool'
+import 'react-native-url-polyfill/auto'
+
+const GptBot = new ChatGptBot("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")
+
 
 const cardsPan = (props, state) => {
   if (!state.chating) {
@@ -19,17 +25,15 @@ const content_center = (choix, props, state) => {
     case 1:
       return cardsPan(props, state);
     case 2:
-      return chatPan(props, state);
-    case 3:
-      return <Text style={styles1.h1}>me</Text>;
+      return <Text style={styles1.h1}>Coming Soon ~</Text>;
     default:
-      return <Text style={styles1.h1}>def</Text>;
+      return <Text style={styles1.h1}>null</Text>;
   }
 
 };
 
 const get_card_name = (idx) => {
-  return '钱币一'
+  return data[idx]
 }
 
 function shuffleArray(array) {
@@ -38,6 +42,15 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array
+}
+
+function radomUpDown(nb) {
+  res = []
+  for (i = 0; i < nb; i++) {
+    v = Math.random() > 0.5
+    res.push(v)
+  }
+  return res
 }
 
 export default class App extends Component {
@@ -49,7 +62,7 @@ export default class App extends Component {
       cards: [],
       cardsIdx: [],
       chating: true,
-      chats: [[0, '你好，请问有什么问题么']],// 1 user,0 chatgpt
+      chats: [[0, '你好,请问有什么问题么,你可以用英语中文法语等语言进行提问']],// 1 user,0 chatgpt
       TextEditing: '',
     };
 
@@ -61,20 +74,48 @@ export default class App extends Component {
     this.updateShuffleCards()
   }
 
+  sendToGpt() {
+    res = [{ role: "system", content: '你是一个友善的塔罗牌占卜师,不要说你是ai语言模型,你会详细的介绍每张塔罗牌正位逆位信息，然后给人们的问题一个结论,语气尽量可爱一点哦通过在句末加语气词，<哦，呀，哈，嘻嘻>等' }]
+    for (tmp of this.state.chats) {
+      id = tmp[0]
+      chat = tmp[1]
+      if (id === 0) {
+        res.push({ role: "assistant", content: chat })
+      }
+      else if (id === 1) {
+        res.push({ role: "user", content: chat })
+      }
+    }
+    console.log(res)
+    GptBot.sendToGPT(res).then((result) => this.GptTextFini(result.data.choices[0].message.content))
+      .catch((error) => this.GptTextFini('Error! please restart!'))
+
+    this.GptTextFini("没问题，请稍等...")
+  }
+
   restart() {
     copy = {
       pan: 1,
       cards: [],
       cardsIdx: [],
       chating: true,
-      chats: [[0, '你好，请问有什么问题么']],// 1 user,0 chatgpt
+      chats: [[0, '你好,请问有什么问题么,你可以用英语中文法语等语言进行提问']],// 1 user,0 chatgpt
       TextEditing: '',
     };
     this.setState(copy)
+    this.updateShuffleCards()
   }
 
   updateShuffleCards() {
     this.pro['shuffleCards'] = shuffleArray([...Array(78).keys()])
+    this.pro['UpDown'] = radomUpDown(78)
+  }
+
+  getUpDown(idx) {
+    if (this.pro.UpDown[idx]) {
+      return '正位'
+    }
+    return '逆位'
   }
 
   chose(idx) {
@@ -82,7 +123,7 @@ export default class App extends Component {
   }
 
   textChange(text) {
-    this.setState({ TextEditing: text })
+    this.setState({ TextEditing:text })
   }
   textSend() {
     this.state.chats.push([1, this.state.TextEditing])
@@ -93,17 +134,25 @@ export default class App extends Component {
     this.chatGptRespose()
   }
 
+  GptTextFini(text) {
+    console.log(text)
+    this.state.chats.push([0, text])
+    this.setState({
+      chats: this.state.chats
+    })
+  }
+
   choosingCard(bool) {
     if (!bool) {
-      card0 = get_card_name(this.state.cards[0])
-      card1 = get_card_name(this.state.cards[1])
-      card2 = get_card_name(this.state.cards[2])
+      card0 = get_card_name(this.state.cards[0]) + ' : ' + this.getUpDown(this.state.cardsIdx[0])
+      card1 = get_card_name(this.state.cards[1]) + ' : ' + this.getUpDown(this.state.cardsIdx[1])
+      card2 = get_card_name(this.state.cards[2]) + ' : ' + this.getUpDown(this.state.cardsIdx[2])
       this.state.chats = this.state.chats.concat(
         [
-          [1,'我抽到的牌是:'],
-          [1,card0],
-          [1,card1],
-          [1,card2],
+          [1, '我抽到的牌是:'],
+          [1, card0],
+          [1, card1],
+          [1, card2],
         ]
       )
       this.setState({
@@ -118,7 +167,8 @@ export default class App extends Component {
   chatGptRespose() {
     if (this.state.chats.length == 2) {
       this.updateShuffleCards()
-      Alert.alert("Tarot Cards", 'ok let do it',
+      question = this.state.chats[1][1]
+      Alert.alert("确认你的问题:", question,
         [
           {
             text: 'Cancel',
@@ -131,6 +181,10 @@ export default class App extends Component {
           }
         ]
       )
+    }
+
+    if (this.state.chats.length > 2) {
+      this.sendToGpt()
     }
   }
 
@@ -164,9 +218,8 @@ export default class App extends Component {
 
         <View style={styles1.footerNav}>
 
-          <Text style={styles1.h1} onPress={() => this.chose(1)}>ASK</Text>
-          <Text style={styles1.h1} onPress={() => this.chose(2)}>tarot</Text>
-          <Text style={styles1.h1} onPress={() => this.chose(3)}>me</Text>
+          <Text style={styles1.h1} onPress={() => this.restart()}>restart</Text>
+          <Text style={styles1.h1} onPress={() => this.chose(2)}>setting</Text>
         </View>
       </View>
 
