@@ -7,7 +7,7 @@ import data from './data/cards.json'
 import { ChatGptBot } from './ChatGpt/gptTool'
 import 'react-native-url-polyfill/auto'
 
-const GptBot = new ChatGptBot("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")
+const GptBot = new ChatGptBot("")
 
 
 const cardsPan = (props, state) => {
@@ -88,7 +88,7 @@ export default class App extends Component {
     }
     console.log(res)
     GptBot.sendToGPT(res).then((result) => this.GptTextFini(result.data.choices[0].message.content))
-      .catch((error) => this.GptTextFini('Error! please restart!'))
+      .catch((error) => this.GptTextFini(error.message))
 
     this.GptTextFini("没问题，请稍等...")
   }
