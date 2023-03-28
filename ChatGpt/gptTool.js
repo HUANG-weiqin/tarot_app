@@ -11,7 +11,7 @@ export class ChatGptBot {
             model: "gpt-3.5-turbo",
             max_tokens: 1000,
             messages: chats,
-            top_p:0.8,
+            top_p:1.0,
         })
         return completion
     }
